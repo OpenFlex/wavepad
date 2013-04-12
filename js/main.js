@@ -21,9 +21,19 @@ var wavepad = (function () {
 			var doc = document;
 
 			if ('AudioContext' in window) {
+
 				myAudioContext = new AudioContext();
+				nodes.volume = myAudioContext.createGain();
+				nodes.delay = myAudioContext.createDelay();
+				nodes.feedbackGain = myAudioContext.createGain();
+
 			} else if ('webkitAudioContext' in window) {
+
 				myAudioContext = new webkitAudioContext();
+				nodes.volume = myAudioContext.createGainNode();
+				nodes.delay = myAudioContext.createDelayNode();
+				nodes.feedbackGain = myAudioContext.createGainNode();
+				
 			} else {
 				alert('Your browser does not yet support the Web Audio API');
 				return;
@@ -50,10 +60,6 @@ var wavepad = (function () {
 			finger = doc.querySelector('.finger');
 
 			nodes.filter = myAudioContext.createBiquadFilter();
-			nodes.volume = myAudioContext.createGainNode();
-			nodes.delay = myAudioContext.createDelayNode();
-			nodes.feedbackGain = myAudioContext.createGainNode();
-
 			myAudioAnalyser = myAudioContext.createAnalyser();
 			myAudioAnalyser.smoothingTimeConstant = 0.85;
 
