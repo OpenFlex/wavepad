@@ -13,21 +13,23 @@ var wavepad = (function () {
 		mySpectrum,
 		hasTouch = false,
 		isSmallViewport = false,
-		isMuted = false;
+		isMuted = false,
+		unprefixed = 'AudioContext' in window,
+		webkitPrefix = 'webkitAudioContext' in window;
 
 	return {
 
 		init: function () {
 			var doc = document;
 
-			if ('AudioContext' in window) {
+			if (unprefixed) {
 
 				myAudioContext = new AudioContext();
 				nodes.volume = myAudioContext.createGain();
 				nodes.delay = myAudioContext.createDelay();
 				nodes.feedbackGain = myAudioContext.createGain();
 
-			} else if ('webkitAudioContext' in window) {
+			} else if (webkitPrefix) {
 
 				myAudioContext = new webkitAudioContext();
 				nodes.volume = myAudioContext.createGainNode();
@@ -131,9 +133,9 @@ var wavepad = (function () {
 			source.frequency.value = x * multiplier;
 			nodes.filter.frequency.value = 512 - (y * multiplier);
 
-			if ('AudioContext' in window) {
+			if (unprefixed) {
 				source.start(0);
-			} else if ('webkitAudioContext' in window) {
+			} else if (webkitPrefix) {
 				source.noteOn(0);
 			}
 
@@ -161,9 +163,9 @@ var wavepad = (function () {
 				source.frequency.value = x * multiplier;
 				nodes.filter.frequency.value = 512 - (y * multiplier);
 
-				if ('AudioContext' in window) {
+				if (unprefixed) {
 					source.stop(0);
-				} else if ('webkitAudioContext' in window) {
+				} else if (webkitPrefix) {
 					source.noteOff(0);
 				}
 			}
@@ -180,10 +182,10 @@ var wavepad = (function () {
 		kill: function () {
 
 			if (myAudioContext.activeSourceCount > 0) {
-				
-				if ('AudioContext' in window) {
+
+				if (unprefixed) {
 					source.stop(0);
-				} else if ('webkitAudioContext' in window) {
+				} else if (webkitPrefix) {
 					source.noteOff(0);
 				}
 			}
