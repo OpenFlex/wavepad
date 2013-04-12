@@ -33,7 +33,7 @@ var wavepad = (function () {
 				nodes.volume = myAudioContext.createGainNode();
 				nodes.delay = myAudioContext.createDelayNode();
 				nodes.feedbackGain = myAudioContext.createGainNode();
-				
+
 			} else {
 				alert('Your browser does not yet support the Web Audio API');
 				return;
@@ -130,7 +130,12 @@ var wavepad = (function () {
 			wavepad.routeSounds();
 			source.frequency.value = x * multiplier;
 			nodes.filter.frequency.value = 512 - (y * multiplier);
-			source.noteOn(0);
+
+			if ('AudioContext' in window) {
+				source.start(0);
+			} else if ('webkitAudioContext' in window) {
+				source.noteOn(0);
+			}
 
 			finger.style.webkitTransform = finger.style.MozTransform = finger.style.msTransform = finger.style.OTransform = finger.style.transform = 'translate3d(' + x + 'px,' + y  + 'px, 0)';
 			finger.classList.add('active');
@@ -155,7 +160,12 @@ var wavepad = (function () {
 			if (myAudioContext.activeSourceCount > 0) {
 				source.frequency.value = x * multiplier;
 				nodes.filter.frequency.value = 512 - (y * multiplier);
-				source.noteOff(0);
+
+				if ('AudioContext' in window) {
+					source.stop(0);
+				} else if ('webkitAudioContext' in window) {
+					source.noteOff(0);
+				}
 			}
 
 			finger.classList.remove('active');
@@ -170,7 +180,12 @@ var wavepad = (function () {
 		kill: function () {
 
 			if (myAudioContext.activeSourceCount > 0) {
-				source.noteOff(0);
+				
+				if ('AudioContext' in window) {
+					source.stop(0);
+				} else if ('webkitAudioContext' in window) {
+					source.noteOff(0);
+				}
 			}
 
 			finger.classList.remove('active');
